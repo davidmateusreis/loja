@@ -18,11 +18,16 @@ public class PessoaClienteService {
     @Autowired
     private PermissaoPessoaService permissaoPessoaService;
 
+    @Autowired
+    private EmailService emailService;
+
     public Pessoa registrar(PessoaClienteRequestDto pessoaClienteRequestDto) {
         Pessoa pessoa = new PessoaClienteRequestDto().converter(pessoaClienteRequestDto);
         pessoa.setDataCriacao(new Date());
         Pessoa pessoaNova = pessoaClienteRepositorio.saveAndFlush(pessoa);
         permissaoPessoaService.vincularPessoaPermissaoCliente(pessoaNova);
+        emailService.enviarEmailTexto(pessoaNova.getEmail(), "Cadastro na Loja do David",
+                "O registro na loja foi realizado com sucesso! Em breve você receberá a senha de acesso por email.");
         return pessoaNova;
     }
 
