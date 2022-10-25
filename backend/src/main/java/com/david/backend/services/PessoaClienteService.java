@@ -1,6 +1,8 @@
 package com.david.backend.services;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,8 +28,11 @@ public class PessoaClienteService {
         pessoa.setDataCriacao(new Date());
         Pessoa pessoaNova = pessoaClienteRepositorio.saveAndFlush(pessoa);
         permissaoPessoaService.vincularPessoaPermissaoCliente(pessoaNova);
-        emailService.enviarEmailTexto(pessoaNova.getEmail(), "Cadastro na Loja do David",
+        Map<String, Object> propriedadesMap = new HashMap<>();
+        propriedadesMap.put("nome", pessoaNova.getNome());
+        propriedadesMap.put("mensagem",
                 "O registro na loja foi realizado com sucesso! Em breve você receberá a senha de acesso por email.");
+        emailService.enviarEmailTemplate(pessoaNova.getEmail(), "Cadastro na Loja do David", propriedadesMap);
         return pessoaNova;
     }
 
